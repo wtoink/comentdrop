@@ -11,10 +11,7 @@ interface User {
 
 export async function POST(request: NextRequest) {
   try {
-    // For demo purposes, we'll create a mock user
-    // In production, you would integrate with actual wallet providers like MetaMask, WalletConnect, etc.
-    // and use Neynar's authentication API
-    
+    // Demo users for testing
     const mockUsers: User[] = [
       {
         fid: 12345,
@@ -44,11 +41,6 @@ export async function POST(request: NextRequest) {
 
     // Randomly select a demo user
     const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
-
-    // In a real implementation, you would:
-    // 1. Verify the wallet signature
-    // 2. Get the user's Farcaster data from Neynar API
-    // 3. Return the actual user data
 
     return NextResponse.json(randomUser);
 

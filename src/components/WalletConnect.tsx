@@ -1,17 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { useWallet } from '@/contexts/WalletContext';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useWallet } from '../contexts/WalletContext';
+import { Button } from './ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
+} from './ui/dropdown-menu';
+import { Badge } from './ui/badge';
 import { Wallet, User, LogOut, Copy, Check } from 'lucide-react';
 
 export function WalletConnect() {

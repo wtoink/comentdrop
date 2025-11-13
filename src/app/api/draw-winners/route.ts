@@ -64,6 +64,8 @@ async function getCastComments(castHash: string): Promise<Comment[]> {
   const apiKey = process.env.NEYNAR_API_KEY || '4143CF21-0BAC-4A9D-9E06-F3AB819238BA';
   
   try {
+    console.log('Fetching cast with hash:', castHash);
+    
     // First, get the cast details to get the thread hash
     const castResponse = await fetch(
       `https://api.neynar.com/v2/farcaster/cast?type=hash&identifier=${castHash}`,
@@ -76,6 +78,8 @@ async function getCastComments(castHash: string): Promise<Comment[]> {
       }
     );
 
+    console.log('Cast response status:', castResponse.status);
+
     if (!castResponse.ok) {
       const errorData = await castResponse.json().catch(() => ({}));
       console.error('Neynar API Error:', errorData);
@@ -86,10 +90,14 @@ async function getCastComments(castHash: string): Promise<Comment[]> {
       if (castResponse.status === 400) {
         throw new Error('Format hash tidak valid. Pastikan menggunakan link postingan Farcaster yang benar.');
       }
+      if (castResponse.status === 401) {
+        throw new Error('API key tidak valid. Silakan periksa konfigurasi API key.');
+      }
       throw new Error(`Gagal mengambil data postingan: ${errorData.message || castResponse.statusText}`);
     }
 
     const castData = await castResponse.json();
+    console.log('Cast data received:', castData);
     const cast = castData.cast;
 
     if (!cast) {
@@ -108,6 +116,8 @@ async function getCastComments(castHash: string): Promise<Comment[]> {
       }
     );
 
+    console.log('Replies response status:', repliesResponse.status);
+
     if (!repliesResponse.ok) {
       const errorData = await repliesResponse.json().catch(() => ({}));
       console.error('Neynar Conversation API Error:', errorData);
@@ -115,6 +125,7 @@ async function getCastComments(castHash: string): Promise<Comment[]> {
     }
 
     const repliesData = await repliesResponse.json();
+    console.log('Replies data received:', repliesData);
     
     // Extract unique commenters
     const uniqueCommenters = new Map<number, Comment>();
@@ -123,6 +134,8 @@ async function getCastComments(castHash: string): Promise<Comment[]> {
       const replies = Array.isArray(repliesData.conversation.cast) 
         ? repliesData.conversation.cast 
         : [repliesData.conversation.cast];
+
+      console.log('Processing replies:', replies.length);
 
       for (const reply of replies) {
         if (reply.author && reply.author.fid && reply.author.username) {
@@ -141,7 +154,9 @@ async function getCastComments(castHash: string): Promise<Comment[]> {
       }
     }
 
-    return Array.from(uniqueCommenters.values());
+    const result = Array.from(uniqueCommenters.values());
+    console.log('Unique commenters found:', result.length);
+    return result;
 
   } catch (error) {
     console.error('Error fetching comments:', error);

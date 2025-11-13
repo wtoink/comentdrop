@@ -1,15 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { WalletConnect } from '@/components/WalletConnect';
-import { useWallet } from '@/contexts/WalletContext';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Badge } from '../components/ui/badge';
+import { Separator } from '../components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import { WalletConnect } from '../components/WalletConnect';
+import { useWallet } from '../contexts/WalletContext';
 import { Loader2, Trophy, Users, Gift, Link2, Shuffle, User, Crown, Wallet } from 'lucide-react';
 
 interface Winner {
@@ -56,6 +56,11 @@ export default function GiveawayPage() {
         castHash = parts[parts.length - 1];
         // Remove any query parameters
         castHash = castHash.split('?')[0];
+      } else if (postUrl.includes('farcaster.xyz')) {
+        const parts = postUrl.split('/');
+        castHash = parts[parts.length - 1];
+        // Remove any query parameters
+        castHash = castHash.split('?')[0];
       } else if (postUrl.includes('app.farcaster.xyz')) {
         const parts = postUrl.split('/');
         castHash = parts[parts.length - 1];
@@ -68,7 +73,7 @@ export default function GiveawayPage() {
 
       // Validate cast hash format (should start with 0x)
       if (!castHash.startsWith('0x') || castHash.length < 10) {
-        throw new Error('Format link postingan tidak valid. Pastikan menggunakan link Warpcast yang benar.');
+        throw new Error('Format link postingan tidak valid. Pastikan link mengandung hash Farcaster yang benar (dimulai dengan 0x).');
       }
 
       const response = await fetch('/api/draw-winners', {
@@ -193,6 +198,7 @@ export default function GiveawayPage() {
                   <summary className="cursor-pointer hover:text-gray-600">Bantuan format link</summary>
                   <div className="mt-2 space-y-1">
                     <p>• Warpcast: https://warpcast.com/username/0xhash</p>
+                    <p>• Farcaster.xyz: https://farcaster.xyz/username/0xhash</p>
                     <p>• Farcaster App: https://app.farcaster.xyz/0xhash</p>
                     <p>• Hash langsung: 0x1234567890abcdef</p>
                   </div>
